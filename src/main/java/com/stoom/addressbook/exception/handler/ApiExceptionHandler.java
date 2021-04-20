@@ -1,6 +1,8 @@
 package com.stoom.addressbook.exception.handler;
 
+import com.google.maps.errors.ApiException;
 import com.stoom.addressbook.exception.AddressNotFoundException;
+import com.stoom.addressbook.exception.GeolocationNotFound;
 import com.stoom.addressbook.exception.RegisteredZipcodeException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +55,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(RegisteredZipcodeException.class)
-    protected ResponseEntity<Object> handleRegisteredEmailException(
+    protected ResponseEntity<Object> handleRegisteredZipcodeException(
             RegisteredZipcodeException ex,
             WebRequest request) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), Collections.emptyList());
@@ -61,11 +64,42 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(AddressNotFoundException.class)
-    protected ResponseEntity<Object> handleAccountNotFoundException(
+    protected ResponseEntity<Object> handleAddressNotFoundException(
             AddressNotFoundException ex,
             WebRequest request) {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), Collections.emptyList());
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
+    @ExceptionHandler(GeolocationNotFound.class)
+    protected ResponseEntity<Object> handlerGeolocationNotFound(
+            GeolocationNotFound ex,
+            WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), Collections.emptyList());
+        return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+
+    @ExceptionHandler(InterruptedException.class)
+    protected ResponseEntity<Object> handlerInterruptedException(
+            InterruptedException ex,
+            WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), Collections.emptyList());
+        return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+
+    @ExceptionHandler(ApiException.class)
+    protected ResponseEntity<Object> handlerApiException(
+            ApiException ex,
+            WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), Collections.emptyList());
+        return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<Object> handlerIOException(
+            IOException ex,
+            WebRequest request) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), Collections.emptyList());
+        return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
 }

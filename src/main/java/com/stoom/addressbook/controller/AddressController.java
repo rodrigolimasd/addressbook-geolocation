@@ -43,7 +43,7 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid Address address) {
+    public ResponseEntity<?> create(@RequestBody @Valid Address address) throws Exception {
         log.info("creating address {}", address);
         Address newAddress = addressService.create(address);
         log.info("address created {}", newAddress);
@@ -54,7 +54,7 @@ public class AddressController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody @Valid Address address) {
+    public ResponseEntity<?> update(@RequestBody @Valid Address address) throws Exception {
         log.info("updating address {}", address);
         addressService.update(address);
         log.info("address updates {}", address);

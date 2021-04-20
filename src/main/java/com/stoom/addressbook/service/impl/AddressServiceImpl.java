@@ -1,10 +1,12 @@
 package com.stoom.addressbook.service.impl;
 
+import com.google.maps.model.LatLng;
 import com.stoom.addressbook.exception.AddressNotFoundException;
 import com.stoom.addressbook.exception.RegisteredZipcodeException;
 import com.stoom.addressbook.model.Address;
 import com.stoom.addressbook.repository.AddressRepository;
 import com.stoom.addressbook.service.AddressService;
+import com.stoom.addressbook.service.GoogleApiService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,15 +15,17 @@ import org.springframework.stereotype.Service;
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
+    private final GoogleApiService googleApiService;
 
-    public AddressServiceImpl(AddressRepository addressRepository) {
+    public AddressServiceImpl(AddressRepository addressRepository, GoogleApiService googleApiService) {
         this.addressRepository = addressRepository;
+        this.googleApiService = googleApiService;
     }
 
     @Override
-    public Address create(Address address) {
+    public Address create(Address address) throws Exception {
         valid(address);
-        //TODO: geolocation google api
+        retrieveGeolocation(address);
         return addressRepository.save(address);
     }
 
@@ -36,7 +40,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address update(Address address) {
+    public Address update(Address address) throws Exception {
         Address addressDb = getAddressById(address.getId());
 
         //setter values
@@ -53,7 +57,7 @@ public class AddressServiceImpl implements AddressService {
 
 
         valid(address);
-        //TODO: geolocation
+        retrieveGeolocation(address);
         return addressRepository.save(addressDb);
     }
 
@@ -73,5 +77,13 @@ public class AddressServiceImpl implements AddressService {
     private Address getAddressById(String id) {
         return addressRepository.findById(id)
                 .orElseThrow(() -> new AddressNotFoundException("Address not found"));
+    }
+
+    private void retrieveGeolocation(Address address) throws Exception {
+        if(address.getLatitude()==null || address.getLongitude()==null){
+            LatLng latLng =  googleApiService.retrieveLocation(address);
+            address.setLatitude(latLng.lat);
+            address.setLongitude(latLng.lng);
+        }
     }
 }

@@ -23,7 +23,6 @@ public class Address implements Serializable  {
     private String streetName;
     @NotNull
     private Integer number;
-    @NotEmpty
     private String complement;
     @NotEmpty
     private String neighbourhood;
