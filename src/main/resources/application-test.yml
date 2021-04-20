@@ -4,3 +4,8 @@ spring:
       host: localhost
       port: 37017
       database: test
+
+integration:
+  services:
+    google-maps:
+      apikey: teste
