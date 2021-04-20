@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  addressbook:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: addressbook
+    container_name: addressbook
+    environment:
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+    ports:
+      - '8090:8090'
+    links:
+      - mongodbserv
+    depends_on:
+      - mongodbserv
+    networks:
+      - adrk
+  mongodbserv:
+    image: mongo:4.0.23
+    container_name: mongodbserv
+    hostname: mongodbserv
+    ports:
+      - "37017:27017"
+    networks:
+      - adrk
+networks:
+  adrk:
+    driver: bridge

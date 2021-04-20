@@ -1,0 +1,14 @@
+server:
+  port: 8090
+
+spring:
+  data:
+    mongodb:
+      host: mongodbserv
+      port: 37017
+      database: stoom_addressbook_db
+
+integration:
+  services:
+    google-maps:
+      apikey: ${GOOGLE_MAPS_API_KEY}
