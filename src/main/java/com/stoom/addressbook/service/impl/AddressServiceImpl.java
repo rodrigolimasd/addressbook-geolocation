@@ -1,5 +1,7 @@
 package com.stoom.addressbook.service.impl;
 
+import com.stoom.addressbook.exception.AddressNotFoundException;
+import com.stoom.addressbook.exception.RegisteredZipcodeException;
 import com.stoom.addressbook.model.Address;
 import com.stoom.addressbook.repository.AddressRepository;
 import com.stoom.addressbook.service.AddressService;
@@ -18,7 +20,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address create(Address address) {
-        //TODO: validation
+        valid(address);
         //TODO: geolocation google api
         return addressRepository.save(address);
     }
@@ -49,7 +51,8 @@ public class AddressServiceImpl implements AddressService {
         addressDb.setLatitude(address.getLatitude());
         addressDb.setLongitude(address.getLongitude());
 
-        //TODO: valid
+
+        valid(address);
         //TODO: geolocation
         return addressRepository.save(addressDb);
     }
@@ -60,8 +63,15 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.delete(addressDb);
     }
 
+    private void valid(Address address) {
+        String id = address.getId()!=null ? address.getId() : "";
+        if(addressRepository.findFirstByZipcodeAndIdNotIn(address.getZipcode(), id).isPresent()){
+            throw new RegisteredZipcodeException("This zip code is already in use");
+        }
+    }
+
     private Address getAddressById(String id) {
         return addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new AddressNotFoundException("Address not found"));
     }
 }
