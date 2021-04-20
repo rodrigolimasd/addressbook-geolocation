@@ -3,6 +3,7 @@ package com.stoom.addressbook.controller;
 import com.stoom.addressbook.dto.AddressFilterDTO;
 import com.stoom.addressbook.model.Address;
 import com.stoom.addressbook.service.AddressService;
+import io.swagger.annotations.Api;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
+@Api
 @Log4j2
 @RestController
 @RequestMapping("/v1/adresses")
